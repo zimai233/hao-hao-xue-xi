@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import ReactECharts from 'echarts-for-react'
 import { useTaskStore } from '../store/taskStore'
 import { formatDate, getFutureReviewDates, getDaysUntil, getForgettingCurveData } from '../utils/ebbinghaus'
-import { BarChart2, TrendingUp, Flame, Clock, Brain, Calendar } from 'lucide-react'
+import { TrendingUp, Flame, Brain } from 'lucide-react'
 
 const CHART_TEXT_COLOR = 'rgba(38, 37, 30, 0.55)'
 const BORDER_COLOR = 'rgba(38, 37, 30, 0.1)'
@@ -169,7 +169,6 @@ export default function DataAnalytics() {
 
   // ── 学习进度：环形进度 ──
   const progressOption = useMemo(() => {
-    const remain = total - mastered
     return {
       backgroundColor: 'transparent',
       tooltip: {
