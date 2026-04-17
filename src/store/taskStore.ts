@@ -88,10 +88,16 @@ export const useTaskStore = create<TaskStore>()(
 
       setIntensity: (id, intensity) => {
         set((state) => {
+          const today = formatDate(new Date())
           const tasks = state.tasks.map((task) => {
             if (task.id !== id) return task
-            // Only update intensity; nextReview recalculates on next check-in using new intensity
-            return { ...task, intensity }
+            // If task was overdue or due today, keep it due today after intensity change
+            // This preserves "today's" tasks when user intentionally changes schedule
+            const wasDueSoon = task.nextReview <= today
+            const nextReview = wasDueSoon
+              ? today
+              : getNextReviewDate(task.reviewCount, intensity, today)
+            return { ...task, intensity, nextReview }
           })
           return { tasks }
         })

@@ -5,9 +5,9 @@ import { CheckCircle, Circle, Trash2, Flame, ChevronDown } from 'lucide-react'
 import type { Task, Intensity } from '../types'
 
 const INTENSITY_OPTIONS: { value: Intensity; label: string }[] = [
-  { value: 'low', label: '低' },
-  { value: 'mid', label: '中' },
-  { value: 'high', label: '高' },
+  { value: 'low', label: '半月' },
+  { value: 'mid', label: '一月' },
+  { value: 'high', label: '季度' },
 ]
 
 export default function Dashboard() {
@@ -19,6 +19,10 @@ export default function Dashboard() {
   const pendingTasks = tasks.filter(
     (t) => t.status !== 'mastered' && t.nextReview <= today && t.lastCheckIn !== today
   )
+  // 今日待新学
+  const pendingNewTasks = pendingTasks.filter((t) => t.status === 'learning')
+  // 今日待复习
+  const pendingReviewTasks = pendingTasks.filter((t) => t.status === 'reviewing')
   // 今日已打卡：今天打卡过的任务
   const checkedInToday = tasks.filter(
     (t) => t.status !== 'mastered' && t.lastCheckIn === today
@@ -45,17 +49,31 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 今日待打卡 */}
+      {/* 今日待新学 */}
       <Section
-        title="今日待打卡"
-        tasks={pendingTasks}
+        title="今日待新学"
+        tasks={pendingNewTasks}
         expandedId={expandedId}
         onToggle={(id) => setExpandedId(expandedId === id ? null : id)}
         onCheckIn={checkIn}
         onDelete={deleteTask}
         today={today}
-        emptyText={total === 0 ? '还没有学习目标' : '今日目标已全部完成'}
-        emptyHint={total === 0 ? '点击底部 + 添加第一个目标' : '明天继续加油'}
+        emptyText={total === 0 ? '还没有学习目标' : '新学目标已全部完成'}
+        emptyHint={total === 0 ? '点击底部 + 添加第一个目标' : '继续加油'}
+        showCheckbox
+      />
+
+      {/* 今日待复习 */}
+      <Section
+        title="今日待复习"
+        tasks={pendingReviewTasks}
+        expandedId={expandedId}
+        onToggle={(id) => setExpandedId(expandedId === id ? null : id)}
+        onCheckIn={checkIn}
+        onDelete={deleteTask}
+        today={today}
+        emptyText={pendingNewTasks.length === 0 && total > 0 ? '复习目标已全部完成' : ''}
+        emptyHint={pendingNewTasks.length === 0 && total > 0 ? '明天继续加油' : ''}
         showCheckbox
       />
 
@@ -204,9 +222,21 @@ function TaskRow({ task, isExpanded, onToggle, onCheckIn, onDelete, today, showC
           }}>
             {task.content}
           </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px', flexWrap: 'wrap' }}>
+            <span style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '0.5625rem',
+              fontWeight: 600,
+              padding: '2px 6px',
+              borderRadius: 'var(--radius-sm)',
+              background: task.status === 'learning' ? 'rgba(31,138,101,0.12)' : task.status === 'reviewing' ? 'rgba(192,133,50,0.12)' : 'rgba(38,37,30,0.08)',
+              color: task.status === 'learning' ? '#1f8a65' : task.status === 'reviewing' ? '#9a6a2a' : 'var(--text-muted)',
+              letterSpacing: '0.02em',
+            }}>
+              {task.status === 'learning' ? '新学' : task.status === 'reviewing' ? '复习' : '已掌握'}
+            </span>
             <span className={`tag ${task.intensity === 'high' ? 'tag-high' : task.intensity === 'mid' ? 'tag-mid' : 'tag-low'}`}>
-              {task.intensity === 'high' ? '高强度' : task.intensity === 'mid' ? '中强度' : '低强度'}
+              {task.intensity === 'high' ? '季度' : task.intensity === 'mid' ? '一月' : '半月'}
             </span>
             <span style={{ color: 'var(--text-muted)', fontSize: '0.6875rem' }}>·</span>
             <span style={{ fontSize: '0.6875rem', color: overdue ? 'var(--color-error)' : 'var(--text-muted)', fontWeight: overdue ? 600 : 400 }}>
@@ -255,7 +285,7 @@ function TaskRow({ task, isExpanded, onToggle, onCheckIn, onDelete, today, showC
         <div style={{ padding: '0 16px 14px 16px', borderTop: '1px solid var(--border-soft)', marginTop: '0' }}>
           {/* Intensity selector */}
           <div style={{ paddingTop: '12px', marginBottom: '10px' }}>
-            <p style={{ fontFamily: 'var(--font-display)', fontSize: '0.625rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 6px' }}>复习强度</p>
+            <p style={{ fontFamily: 'var(--font-display)', fontSize: '0.625rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 6px' }}>记忆目标</p>
             <div style={{ display: 'flex', gap: '6px' }}>
               {INTENSITY_OPTIONS.map(({ value, label }) => (
                 <button
@@ -287,7 +317,7 @@ function TaskRow({ task, isExpanded, onToggle, onCheckIn, onDelete, today, showC
           <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
             {/* 添加时间 */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--text-muted)', width: '52px', flexShrink: 0 }}>{task.createdAt}</span>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--text-muted)', width: '56px', flexShrink: 0, whiteSpace: 'nowrap' }}>{task.createdAt}</span>
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'rgba(38,37,30,0.2)', flexShrink: 0 }} />
               <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>添加</span>
             </div>
@@ -298,7 +328,7 @@ function TaskRow({ task, isExpanded, onToggle, onCheckIn, onDelete, today, showC
               const isToday = date === today
               return (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--text-muted)', width: '52px', flexShrink: 0 }}>{date}</span>
+                  <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--text-muted)', width: '56px', flexShrink: 0, whiteSpace: 'nowrap' }}>{date}</span>
                   <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: isToday ? 'var(--color-accent)' : 'var(--border-medium)', flexShrink: 0 }} />
                   <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: isToday ? 'var(--color-accent)' : 'var(--text-muted)', fontWeight: isToday ? 600 : 400 }}>
                     {isToday ? '今日打卡' : `${daysAgo} 天前`}
@@ -309,7 +339,7 @@ function TaskRow({ task, isExpanded, onToggle, onCheckIn, onDelete, today, showC
 
             {/* 当前复习时间（重点标注） */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--color-accent)', width: '52px', flexShrink: 0, fontWeight: 600 }}>{task.nextReview}</span>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--color-accent)', width: '56px', flexShrink: 0, fontWeight: 600, whiteSpace: 'nowrap' }}>{task.nextReview}</span>
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-accent)', flexShrink: 0, boxShadow: '0 0 0 2px rgba(245,78,0,0.25)' }} />
               <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--color-accent)', fontWeight: 600 }}>
                 {overdue ? `已逾期 ${Math.abs(days)} 天` : days === 0 ? '今日复习' : `${days} 天后复习`}
@@ -319,12 +349,13 @@ function TaskRow({ task, isExpanded, onToggle, onCheckIn, onDelete, today, showC
             {/* 将来的复习 */}
             {futureDates.map((date, idx) => {
               const daysUntil = getDaysUntil(date)
+              const seq = idx + 1
               return (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--text-muted)', width: '52px', flexShrink: 0 }}>{date}</span>
+                  <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--text-muted)', width: '56px', flexShrink: 0, whiteSpace: 'nowrap' }}>{date}</span>
                   <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'rgba(38,37,30,0.15)', flexShrink: 0 }} />
                   <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>
-                    {daysUntil} 天后
+                    第{seq}次复习 · {daysUntil} 天后
                   </span>
                 </div>
               )

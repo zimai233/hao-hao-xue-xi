@@ -7,10 +7,10 @@ interface Props {
   onClose: () => void
 }
 
-const INTENSITIES: { value: Intensity; label: string }[] = [
-  { value: 'low', label: '低强度' },
-  { value: 'mid', label: '中强度' },
-  { value: 'high', label: '高强度' },
+const INTENSITIES: { value: Intensity; label: string; sub: string }[] = [
+  { value: 'low', label: '半月记忆', sub: '复习紧凑' },
+  { value: 'mid', label: '一月记忆', sub: '循序渐进' },
+  { value: 'high', label: '季度记忆', sub: '间隔宽松' },
 ]
 
 export default function AddTaskModal({ onClose }: Props) {
@@ -122,7 +122,7 @@ export default function AddTaskModal({ onClose }: Props) {
             复习强度
           </label>
           <div style={{ display: 'flex', gap: '8px' }}>
-            {INTENSITIES.map(({ value, label }) => (
+            {INTENSITIES.map(({ value, label, sub }) => (
               <button
                 key={value}
                 onClick={() => setIntensity(value)}
@@ -160,9 +160,14 @@ export default function AddTaskModal({ onClose }: Props) {
                       : 'var(--text-secondary)',
                   cursor: 'pointer',
                   transition: 'all 150ms ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '2px',
                 }}
               >
-                {label}
+                <span>{label}</span>
+                <span style={{ fontSize: '0.5625rem', opacity: 0.7, fontWeight: 400 }}>{sub}</span>
               </button>
             ))}
           </div>
@@ -174,7 +179,7 @@ export default function AddTaskModal({ onClose }: Props) {
               marginTop: '8px',
             }}
           >
-            高强度间隔长，适合重要目标
+            目标时间越短，复习越紧凑；时间越长，间隔越宽松
           </p>
         </div>
 

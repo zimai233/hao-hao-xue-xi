@@ -14,9 +14,9 @@ const STATUS_LABELS: Record<TaskStatus, string> = {
 }
 
 const INTENSITY_LABELS: Record<string, string> = {
-  high: '高强度',
-  mid: '中强度',
-  low: '低强度',
+  high: '季度',
+  mid: '一月',
+  low: '半月',
 }
 
 export default function Library() {
