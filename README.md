@@ -1,73 +1,102 @@
-# React + TypeScript + Vite
+# 好好学习
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一款基于艾宾浩斯遗忘曲线的智能学习计划应用，帮助你科学地记忆和复习学习内容。
 
-Currently, two official plugins are available:
+## 功能特点
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### 📚 首页 Dashboard
+- **连续打卡天数**：记录你的学习连续打卡记录
+- **今日待新学**：显示需要今天开始学习的新目标
+- **今日待复习**：根据艾宾浩斯遗忘曲线显示需要复习的目标
+- **学习进度**：实时统计总目标数、已掌握数量、已复习次数
+- **一键打卡**：点击即完成今日学习/复习
 
-## React Compiler
+### 🗂️ 目标库 Library
+- **状态筛选**：按新学/复习中/已掌握筛选目标
+- **多种排序**：按添加时间/复习时间/状态排序
+- **直观展示**：清晰显示每个目标的当前状态和下次复习时间
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 📊 数据分析 DataAnalytics
+- **学习趋势图表**：可视化你的学习进度
+- **掌握度分析**：了解各目标的学习阶段
+- **复习统计**：追踪复习计划执行情况
 
-## Expanding the ESLint configuration
+### ➕ 智能添加
+- **目标名称**：添加你的学习目标
+- **学习强度**：选择复习间隔（半月/一月/季度）
+- **自动规划**：根据艾宾浩斯遗忘曲线自动安排复习时间
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 艾宾浩斯复习周期
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+应用遵循科学的艾宾浩斯遗忘曲线，安排以下复习时间点：
+- 学习后 → 第 1 天 → 第 2 天 → 第 4 天 → 第 7 天 → 第 15 天 → 第 30 天（季度）
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+根据选择的学习强度，自动规划后续复习节点。
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 技术栈
+
+- **框架**: React 19 + TypeScript
+- **构建**: Vite
+- **状态管理**: Zustand
+- **图表**: ECharts
+- **样式**: Tailwind CSS v4
+- **图标**: Lucide React
+- **字体**: 思源黑体 (Noto Sans SC)
+
+## 开始使用
+
+### 安装依赖
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 开发模式
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+### 构建生产版本
+
+```bash
+npm run build
+```
+
+### 预览构建结果
+
+```bash
+npm run preview
+```
+
+## 在线访问
+
+部署版本: https://zimai233.github.io/hao-hao-xue-xi/
+
+## 项目结构
+
+```
+src/
+├── components/          # React 组件
+│   ├── Dashboard.tsx    # 首页
+│   ├── Library.tsx      # 目标库
+│   ├── DataAnalytics.tsx # 数据分析
+│   └── AddTaskModal.tsx  # 添加任务弹窗
+├── store/              # Zustand 状态管理
+│   └── taskStore.ts    # 任务状态
+├── types/              # TypeScript 类型定义
+│   └── index.ts
+├── utils/              # 工具函数
+│   └── ebbinghaus.ts   # 艾宾浩斯曲线计算
+├── App.tsx             # 主应用组件
+├── main.tsx            # 入口文件
+└── index.css           # 全局样式
+```
+
+## 数据存储
+
+应用使用浏览器 localStorage 存储数据，所有学习数据保存在本地。
+
+## License
+
+MIT
